@@ -1,0 +1,9 @@
+<h2>Edit</h2>
+
+<%= simple_form_for @book do |f| %>
+  <%= f.input :name %>
+  <%= f.input :author %>
+  <%= f.button :submit %>
+<% end %>
+
+<%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
