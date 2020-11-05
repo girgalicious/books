@@ -1,14 +1,17 @@
 class BooksController < ApplicationController
     def index
-        @books = Book.paginate(page: params[:page] || 1)
+        @books = policy_scope(Book)
     end
     
     def new
+        authorize Book
         @book = Book.new
     end
     
     def create
+        authorize Book
         @book = Book.new(book_params)
+        @book.creator_id = current_user.id
         if @book.save
             redirect_to :controller => 'books', :action => 'index'
         else
@@ -17,15 +20,17 @@ class BooksController < ApplicationController
     end
     
     def edit
-        @book = Book.find(params[:id])
+       @book = book
+       authorize @book
     end
     
     def show
-        @book = Book.find(params[:id])
+        @book = book
     end
     
     def update
-        @book = Book.find(params[:id])
+        @book = book
+        authorize @book
         if @book.update(book_params)
             redirect_to :controller => 'books', :action => 'index'
         else
@@ -34,10 +39,15 @@ class BooksController < ApplicationController
     end
     
     def destroy
-        @book = Book.find(params[:id])
+        @book = book
+        authorize @book
         @book.destroy!
         
         redirect_to :controller => 'books', :action => 'index'
+    end
+    
+    def book
+        policy_scope(Book).find(params[:id])
     end
     
     def book_params
